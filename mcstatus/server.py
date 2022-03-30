@@ -85,7 +85,7 @@ class JavaServer(MCServer):
         return cls(addr.host, addr.port, timeout=timeout)
 
     def ping(self, **kwargs) -> float:
-        """Checks the latency between a Minecraft Java Edition server and the client (you).
+        """Check the latency between a Minecraft Java Edition server and the client (you).
 
         :param type **kwargs: Passed to a `ServerPinger` instance.
         :return: The latency between the Minecraft Server and you.
@@ -101,7 +101,7 @@ class JavaServer(MCServer):
         return pinger.test_ping()
 
     async def async_ping(self, **kwargs) -> float:
-        """Asynchronously checks the latency between a Minecraft Java Edition server and the client (you).
+        """Asynchronously check the latency between a Minecraft Java Edition server and the client (you).
 
         :param type **kwargs: Passed to a `AsyncServerPinger` instance.
         :return: The latency between the Minecraft Server and you.
@@ -118,7 +118,7 @@ class JavaServer(MCServer):
         return ping
 
     def status(self, **kwargs) -> PingResponse:
-        """Checks the status of a Minecraft Java Edition server via the ping protocol.
+        """Check the status of a Minecraft Java Edition server via the ping protocol.
 
         :param type **kwargs: Passed to a `ServerPinger` instance.
         :return: Status information in a `PingResponse` instance.
@@ -135,7 +135,7 @@ class JavaServer(MCServer):
         return result
 
     async def async_status(self, **kwargs) -> PingResponse:
-        """Asynchronously checks the status of a Minecraft Java Edition server via the ping protocol.
+        """Asynchronously check the status of a Minecraft Java Edition server via the ping protocol.
 
         :param type **kwargs: Passed to a `AsyncServerPinger` instance.
         :return: Status information in a `PingResponse` instance.
@@ -152,7 +152,11 @@ class JavaServer(MCServer):
         return result
 
     def query(self) -> QueryResponse:
-        """Checks the status of a Minecraft Java Edition server via the query protocol."""
+        """Check the status of a Minecraft Java Edition server via the query protocol.
+
+        :return: Query status information in a `QueryResponse` instance.
+        :rtype: QueryResponse
+        """
         # TODO: WARNING: This try-except for NXDOMAIN is only done because
         # of failing tests on mac-os, which for some reason can't resolve 'localhost'
         # into '127.0.0.1'. This try-except needs to be removed once this issue
@@ -173,7 +177,11 @@ class JavaServer(MCServer):
             return querier.read_query()
 
     async def async_query(self) -> QueryResponse:
-        """Asynchronously checks the status of a Minecraft Java Edition server via the query protocol."""
+        """Asynchronously check the status of a Minecraft Java Edition server via the query protocol.
+
+        :return: Query status information in a `QueryResponse` instance.
+        :rtype: QueryResponse
+        """
         # TODO: WARNING: This try-except for NXDOMAIN is only done because
         # of failing tests on mac-os, which for some reason can't resolve 'localhost'
         # into '127.0.0.1'. This try-except needs to be removed once this issue
@@ -195,13 +203,18 @@ class JavaServer(MCServer):
 
 
 class BedrockServer(MCServer):
-    """Base class for a Minecraft Bedrock Edition server."""
+    """Base class for a Minecraft Bedrock Edition server.
+
+    :param str host: The host/address/ip of the Minecraft server.
+    :param int port: The port that the server is on.
+    :param float timeout: The timeout in seconds before failing to connect.
+    """
 
     DEFAULT_PORT = 19132
 
     @retry(tries=3)
     def status(self, **kwargs) -> BedrockStatusResponse:
-        """Checks the status of a Minecraft Bedrock Edition server.
+        """Check the status of a Minecraft Bedrock Edition server.
 
         :param type **kwargs: Passed to a `BedrockServerStatus` instance.
         :return: Status information in a `BedrockStatusResponse` instance.
@@ -211,7 +224,7 @@ class BedrockServer(MCServer):
 
     @retry(tries=3)
     async def async_status(self, **kwargs) -> BedrockStatusResponse:
-        """Asynchronously checks the status of a Minecraft Bedrock Edition server.
+        """Asynchronously check the status of a Minecraft Bedrock Edition server.
 
         :param type **kwargs: Passed to a `BedrockServerStatus` instance.
         :return: Status information in a `BedrockStatusResponse` instance.
