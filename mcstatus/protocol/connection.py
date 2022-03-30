@@ -23,7 +23,11 @@ if TYPE_CHECKING:
 
 
 def ip_type(address: int | str) -> int | None:
-    """Returns what version of IP a given address is."""
+    """Returns what version of IP a given address is.
+
+    :return: 4 or 6 depending on the IP version.
+    :raises ValueError: IP isn't valid.
+    """
     try:
         return ip_address(address).version
     except ValueError:
