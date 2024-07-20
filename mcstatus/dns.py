@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import cast
 
+import socket
 import dns.asyncresolver
 import dns.resolver
 from dns.rdatatype import RdataType
@@ -19,12 +20,17 @@ def resolve_a_record(hostname: str, lifetime: float | None = None) -> str:
         Most notably this will be :exc:`dns.exception.Timeout`, :exc:`dns.resolver.NXDOMAIN`
         and :exc:`dns.resolver.NoAnswer`
     """
-    answers = dns.resolver.resolve(hostname, RdataType.A, lifetime=lifetime)
-    # There should only be one answer here, though in case the server
-    # does actually point to multiple IPs, we just pick the first one
-    answer = cast(ARecordAnswer, answers[0])
-    ip = str(answer).rstrip(".")
-    return ip
+    ip_addr = None
+    # get any ipv4/ipv6 address supporting the TCP/UDP protocol
+    for fam, typ, _proto, _canonname, addr in socket.getaddrinfo(hostname, None):
+        if fam in (socket.AF_INET, socket.AF_INET6) and typ in (socket.SOCK_STREAM, socket.SOCK_DGRAM):
+            ip_addr = addr[0]
+
+    if not ip_addr:
+        # try to make getaddrinfo() re-raise the proper exception, otherwise fail manually.
+        socket.getaddrinfo(hostname, None, family=socket.AF_INET, type=socket.SOCK_STREAM)
+        raise OSError(f"socket.getaddrinfo failed for {hostname}")
+    return ip_addr
 
 
 async def async_resolve_a_record(hostname: str, lifetime: float | None = None) -> str:
